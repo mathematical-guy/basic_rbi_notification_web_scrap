@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import lxml
+# import lxml
 import pandas as pd
 
 url = "https://www.rbi.org.in/Scripts/NotificationUser.aspx"
@@ -18,9 +18,16 @@ dates = []
 
 #-----------------------------------------------------------------------------------------
 
-def scraping(row):
-    new_link = "https://www.rbi.org.in/Scripts/" + row.a['href']
-    return row.text, new_link
+def scrapper(row):
+    try:
+        title = row.text
+        link = str(row.find_all('a', target='_blank')).split(' ')[1]
+        # print(link)
+    except:
+        link = None
+        # print(f'TITLE: {title}')
+        # print(f'LINK: {link}')
+    return title, link
 
 
 #-----------------------------------------------------------------------------------------
@@ -32,11 +39,10 @@ for row in rows:
         date = row.text
 
     if "<a class" in str(row):
-        title, link = scraping(row)
+        title, link = scrapper(row)
         titles.append(title)
         links.append(link)
         dates.append(date)
-
 
 
 data = {'titles': titles, 'links': links, 'dates': dates}
